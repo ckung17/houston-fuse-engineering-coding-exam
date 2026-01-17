@@ -17,20 +17,38 @@
  * 
  * Feel free to create additional components if you'd like!
  */
+import {useState, useEffect} from 'react';
+import {fetchTeamMembers} from '../api/team';
+import {TeamMember, Department, DEPARTMENTS, TeamResponse} from '../types/team';
 
 export function TeamList() {
-  // TODO: Implement this component
+  const [TeamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  
+  useEffect(() => {
+    fetchTeamMembers().then((response: TeamResponse) => {
+      if (response.success && response.data) {
+        console.log('Fetched team members:', response.data);
+        setTeamMembers(response.data);
+      } else {
+        // Handle error state at API level
+        console.error('Failed to load team members:', response.error);
+      }
+    }).catch((err) => {
+      // Handle fetch error
+      console.error('Error fetching team members:', err);
+    });
+  }, []);
 
   return (
     <div>
-      <p>Replace this with your implementation!</p>
-
+      <h1>Team List</h1>
       {/* Hint: You might want sections for:
           - Filter controls (search input, department dropdown)
           - Loading state
           - Error state  
           - Team member list/grid
       */}
+
     </div>
   );
 }
