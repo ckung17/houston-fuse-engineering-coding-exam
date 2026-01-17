@@ -23,21 +23,28 @@ import {TeamMember, Department, DEPARTMENTS, TeamResponse} from '../types/team';
 
 export function TeamList() {
   const [TeamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
     fetchTeamMembers().then((response: TeamResponse) => {
       if (response.success && response.data) {
-        console.log('Fetched team members:', response.data);
         setTeamMembers(response.data);
       } else {
         // Handle error state at API level
-        console.error('Failed to load team members:', response.error);
+        setError(response.error ?? 'Failed to load team members');
       }
     }).catch((err) => {
       // Handle fetch error
-      console.error('Error fetching team members:', err);
+      setError(err.message);
+    })
+    .finally(() => {
+      setLoading(false);
     });
   }, []);
+
+  if (loading) return <p>Loading team members…</p>;
+  if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
   return (
     <div>
