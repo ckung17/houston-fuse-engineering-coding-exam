@@ -25,6 +25,9 @@ export function TeamList() {
   const [TeamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [search, setSearch] = useState<string>('');
+  const [deptFilter, setDeptFilter] = useState<Department | 'All'>('All');
   
   useEffect(() => {
     fetchTeamMembers().then((response: TeamResponse) => {
@@ -32,7 +35,7 @@ export function TeamList() {
         setTeamMembers(response.data);
       } else {
         // Handle error state at API level
-        setError(response.error ?? 'Failed to load team members');
+        setError(response.error ?? 'Failed to load team members.');
       }
     }).catch((err) => {
       // Handle fetch error
@@ -46,6 +49,12 @@ export function TeamList() {
   if (loading) return <p>Loading team members…</p>;
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
+  const filteredMembers = TeamMembers.filter((member) => {
+      const matchesName = member.name.toLowerCase().includes(search.toLowerCase());
+      const matchesDept = deptFilter === 'All' || member.department === deptFilter;
+      return matchesName && matchesDept;
+    });
+
   return (
     <div>
       <h1>Team List</h1>
@@ -55,6 +64,44 @@ export function TeamList() {
           - Error state  
           - Team member list/grid
       */}
+      <div>
+        <input
+          type="text"
+          placeholder="Search by name"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <select
+          value={deptFilter}
+          onChange={(e) => setDeptFilter(e.target.value as Department | 'All')}
+        >
+          <option value="All">All Departments</option>
+          {DEPARTMENTS.map((dept) => (
+            <option key={dept} value={dept}>{dept}</option>
+          ))}
+        </select>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Department</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredMembers.map((member) => (
+            <tr key={member.id}>
+              <td>{member.name}</td>
+              <td>{member.role}</td>
+              <td>{member.department}</td>
+              <td>{member.email}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
     </div>
   );
