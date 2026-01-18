@@ -20,6 +20,7 @@
 import {useState, useEffect} from 'react';
 import {fetchTeamMembers} from '../api/team';
 import {TeamMember, Department, DEPARTMENTS, TeamResponse} from '../types/team';
+import '../index.css';
 
 export function TeamList() {
   const [TeamMembers, setTeamMembers] = useState<TeamMember[]>([]);
@@ -58,13 +59,13 @@ export function TeamList() {
   return (
     <div>
       <div>
-        <input
+        <input className='search-bar'
           type="text"
           placeholder="Search by name"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <select
+        <select className='dept-filter'
           value={deptFilter}
           onChange={(e) => setDeptFilter(e.target.value as Department | 'All')}
         >
@@ -93,6 +94,14 @@ export function TeamList() {
               <td>{member.email}</td>
             </tr>
           ))}
+
+          {filteredMembers.length === 0 && (
+            <tr>
+              <td colSpan={4} className='no-results'>
+                No team members matching your search.
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

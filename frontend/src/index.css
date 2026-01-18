@@ -24,3 +24,33 @@ h1 {
 }
 
 /* Add your styles below */
+table {
+  width: 90%;
+  margin-top: 10px;
+}
+
+table th, table td {
+  border: 1px solid;
+  padding: 8px;
+  text-align: left;
+}
+
+table th {
+  background-color:lightskyblue;
+}
+
+.no-results {
+  text-align: center;
+  font-style: italic;
+}
+
+.search-bar {
+  padding: 2px;
+  width: 45%;
+  margin-right: 5px;
+}
+
+.dept-filter {
+  padding: 2px;
+  width: 30%;
+}
