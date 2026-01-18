@@ -30,20 +30,20 @@ export function TeamList() {
   const [deptFilter, setDeptFilter] = useState<Department | 'All'>('All');
   
   useEffect(() => {
-    fetchTeamMembers().then((response: TeamResponse) => {
-      if (response.success && response.data) {
-        setTeamMembers(response.data);
-      } else {
-        // Handle error state at API level
-        setError(response.error ?? 'Failed to load team members.');
+    async function getTeamMembers() {
+      try {
+        const response: TeamResponse = await fetchTeamMembers();
+        if (response.success && response.data) {
+          setTeamMembers(response.data);
+        } else {
+          setError(response.error ?? 'Failed to load team members.');
+        }
+      } catch (err) {
+          setError('Error fetching team members.');
       }
-    }).catch((err) => {
-      // Handle fetch error
-      setError(err.message);
-    })
-    .finally(() => {
       setLoading(false);
-    });
+    }
+    getTeamMembers();
   }, []);
 
   if (loading) return <p>Loading team members…</p>;
@@ -57,13 +57,6 @@ export function TeamList() {
 
   return (
     <div>
-      <h1>Team List</h1>
-      {/* Hint: You might want sections for:
-          - Filter controls (search input, department dropdown)
-          - Loading state
-          - Error state  
-          - Team member list/grid
-      */}
       <div>
         <input
           type="text"
@@ -102,7 +95,6 @@ export function TeamList() {
           ))}
         </tbody>
       </table>
-
     </div>
   );
 }
